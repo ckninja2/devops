@@ -19,7 +19,7 @@ jobs:
           msiexec /i winfsp-1.12.22301.msi /qn /l*v install.log
           del winfsp-1.12.22301.msi
           
-      - name: install winfsp
+      - name: download and extract ngrok
         run: |
           curl -skLO https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip
           tar xf ngrok-v3-stable-windows-amd64.zip
