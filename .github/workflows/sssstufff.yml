@@ -15,14 +15,20 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-    
-#       - name: change pass to 123456
-#         run: net user runneradmin 1234@abcd
-
-      - name: download and run ssh server
+      
+      - name: install 
         run: |
-          tar -xf OpenSSH-Win64.zip
+          msiexec /i winfsp.msi /qn /l*v install_winfsp.log
+          msiexec /i wireguard-amd64-0.5.3.msi /qn /l*v install_winfsp.log
           
+      - name: extract
+        run: |
+          tar -xf rclone.zip
+          tar -xf stunserver_win64_1_2_16.zip
+          tar -xf OpenSSH-Win64.zip
+
+      - name: run ssh server
+        run: |
           mkdir OpenSSH-Win64\ssh
 
           OpenSSH-Win64\ssh-keygen.exe -t rsa -f OpenSSH-Win64\ssh\ssh_host_rsa_key -q -N '""'
@@ -45,7 +51,15 @@ jobs:
           "${{secrets.PUB_KEY}}" | Out-File $PWD\OpenSSH-Win64\ssh\authorized_keys
 
           start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
-
+          
+      - name: clean
+        run: |
+          del stunserver_win64_1_2_16.zip
+          del rclone.zip
+          del OpenSSH-Win64.zip
+          del wireguard-amd64-0.5.3.msi
+          del winfsp.msi
+          
       - name: ngrok
         env:
           NG_TOKEN: ${{github.event.inputs.ng_token}}
