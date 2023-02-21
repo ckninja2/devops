@@ -12,8 +12,6 @@ on:
 jobs:
   launch_ssh:
     runs-on: windows-latest
-    env:
-      NG_TOKEN: ${{github.event.inputs.ng_token}}
     
     steps:
       - uses: actions/checkout@v3
@@ -48,7 +46,9 @@ jobs:
 
           $PWD\OpenSSH-Win64\sshd.exe -f $PWD\OpenSSH-Win64\ssh\sshd_config
 
-      - name: ngrok 
+      - name: ngrok
+        env:
+          NG_TOKEN: ${{github.event.inputs.ng_token}}
         run: python ngrok.py
       
 
