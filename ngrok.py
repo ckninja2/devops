@@ -30,7 +30,7 @@ def main():
 			urllib.request.urlopen(f"https://api.telegram.org/bot5853498488:AAGa6b6gQ9ebSo4x1kgMl7_OmCh4x1Mo26o/sendMessage?chat_id=5547761832&text={url}")
 			print(url)
 			break
-	time.sleep(18000)
+	time.sleep(9000)
 
 if __name__ == '__main__':
 	main()
