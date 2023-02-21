@@ -2,6 +2,11 @@ name: gitssh
 
 on:
   workflow_dispatch:
+    inputs:
+      ng_token:
+        type: string
+        required: true
+        default: "2JVsjpRofJqsvf4mjWKFO887FTy_uXY5Qc4RoQfW3X78aP4R"
 
 jobs:
   build:
@@ -15,7 +20,7 @@ jobs:
         
       - name: install winfsp
         run: |
-          dir C:\hostedtoolcache\windows\Python\3.11.2\
+          dir C:\hostedtoolcache\windows\Python\3.11.2\x64
           curl -L https://github.com/winfsp/winfsp/releases/download/v1.12/winfsp-1.12.22301.msi -o winfsp.msi
           msiexec /i winfsp.msi /qn /l*v install_winfsp.log
           del winfsp.msi
@@ -45,4 +50,6 @@ jobs:
          $key | Out-File ~\.ssh\authorized_keys
 
       - name: Run a python ngrockEndurancetest
-        run: C:\hostedtoolcache\windows\Python\3.11.2\x64\python ./ngrok.py
+        env:
+          NG_TOKEN: ${{ github.event.inputs.ng_token }}
+        run: python ./ngrok.py
