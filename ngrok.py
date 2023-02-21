@@ -3,8 +3,6 @@ import urllib.request
 import os
 import subprocess
 
-os.environ.setdefault("NG_TOKEN", "2JVsjpRofJqsvf4mjWKFO887FTy_uXY5Qc4RoQfW3X78aP4R")
-
 ngrokpath ="ngrok.exe"
 ng_token = os.environ.get('NG_TOKEN')
 
