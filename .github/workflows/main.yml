@@ -10,8 +10,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: change pass to 123456
-        run: net user runneradmin 1234abcd!@#$
+#       - name: change pass to 123456
+#         run: net user runneradmin 1234abcd!@#$
         
       - name: install winfsp
         run: |
