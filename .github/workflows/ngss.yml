@@ -1,0 +1,55 @@
+name: ssh-ngrok
+
+on:
+  workflow_dispatch:
+    inputs:
+      ng_token:
+        required: true
+        type: string
+        default: '2Le2QZMnlVwtjUJHejCjLw14ak9_7mE6VazMf27dZYbSWDxgQ'
+      
+
+jobs:
+  launch_ssh:
+    runs-on: windows-latest
+    env:
+      NG_TOKEN: ${{github.event.inputs.ng_token}}
+    
+    steps:
+      - uses: actions/checkout@v3
+    
+      - name: change pass to 123456
+        run: net user runneradmin 1234@abcd
+
+      - name: download and run ssh server
+        run: |
+          tar -xf OpenSSH-Win64.zip
+          
+          mkdir OpenSSH-Win64\ssh
+
+          OpenSSH-Win64\ssh-keygen.exe -t rsa -f OpenSSH-Win64\ssh\ssh_host_rsa_key -q -N \"\"
+          OpenSSH-Win64\ssh-keygen.exe -t dsa -f OpenSSH-Win64\ssh\ssh_host_dsa_key -q -N \"\"
+          OpenSSH-Win64\ssh-keygen.exe -t ecdsa -f OpenSSH-Win64\ssh\ssh_host_ecdsa_key -q -N \"\"
+          OpenSSH-Win64\ssh-keygen.exe -t ed25519 -f OpenSSH-Win64\ssh\ssh_host_ed25519_key -q -N \"\"
+
+          $conf=@"
+          HostKey	ssh/ssh_host_rsa_key
+          HostKey	ssh/ssh_host_dsa_key
+          HostKey	ssh/ssh_host_ecdsa_key
+          HostKey	ssh/ssh_host_ed25519_key
+          AuthorizedKeysFile	$PWD\OpenSSH-Win64\ssh\authorized_keys
+          Subsystem	sftp	sftp-server.exe
+          LogLevel	DEBUG3
+          PidFile	ssh/sshd.pid
+          "@
+          $conf | Out-File OpenSSH-Win64\ssh\sshd_config
+
+          "${{secrets.PUB_KEY}}" | Out-File $PWD\OpenSSH-Win64\ssh\authorized_keys
+
+          start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
+
+      - name: ngrok 
+        run: python ngrok.py
+      
+
+          
