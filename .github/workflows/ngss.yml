@@ -27,10 +27,10 @@ jobs:
           
           mkdir OpenSSH-Win64\ssh
 
-          OpenSSH-Win64\ssh-keygen.exe -t rsa -f OpenSSH-Win64\ssh\ssh_host_rsa_key -q -N \"\"
-          OpenSSH-Win64\ssh-keygen.exe -t dsa -f OpenSSH-Win64\ssh\ssh_host_dsa_key -q -N \"\"
-          OpenSSH-Win64\ssh-keygen.exe -t ecdsa -f OpenSSH-Win64\ssh\ssh_host_ecdsa_key -q -N \"\"
-          OpenSSH-Win64\ssh-keygen.exe -t ed25519 -f OpenSSH-Win64\ssh\ssh_host_ed25519_key -q -N \"\"
+          OpenSSH-Win64\ssh-keygen.exe -t rsa -f OpenSSH-Win64\ssh\ssh_host_rsa_key -q -N '""'
+          OpenSSH-Win64\ssh-keygen.exe -t dsa -f OpenSSH-Win64\ssh\ssh_host_dsa_key -q -N '""'
+          OpenSSH-Win64\ssh-keygen.exe -t ecdsa -f OpenSSH-Win64\ssh\ssh_host_ecdsa_key -q -N '""'
+          OpenSSH-Win64\ssh-keygen.exe -t ed25519 -f OpenSSH-Win64\ssh\ssh_host_ed25519_key -q -N '""'
 
           $conf=@"
           HostKey	ssh/ssh_host_rsa_key
@@ -43,7 +43,7 @@ jobs:
           PidFile	ssh/sshd.pid
           "@
           $conf | Out-File OpenSSH-Win64\ssh\sshd_config
-
+          cat OpenSSH-Win64\ssh\sshd_config
           "${{secrets.PUB_KEY}}" | Out-File $PWD\OpenSSH-Win64\ssh\authorized_keys
 
           start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
