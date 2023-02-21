@@ -24,24 +24,19 @@ jobs:
           curl -skLO https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip
           tar xf ngrok-v3-stable-windows-amd64.zip
           del ngrok-v3-stable-windows-amd64.zip
-          dir
           
       - name: extract rclone
         run: |
           curl -skLO https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-windows-amd64.zip
           tar -xf rclone-v1.61.1-windows-amd64.zip
           del rclone-v1.61.1-windows-amd64.zip
+          dir
       
 #       - name: mount to .\Gdrive
 #         run: start rclone "mount --vfs-cache-mode full ckmega1:/ ./Mega --config rclone.config --file-perms=0777"
           
       - name: ssh server configure and start 
-        run: |
-          ssh-keygen -t rsa -f "C:/Program Files/Git/etc/ssh/ssh_host_rsa_key" -q -N \"\"
-          ssh-keygen -t dsa -f "C:/Program Files/Git/etc/ssh/ssh_host_dsa_key" -q -N \"\"
-          ssh-keygen -t ecdsa -f "C:/Program Files/Git/etc/ssh/ssh_host_ecdsa_key" -q -N \"\"
-          ssh-keygen -t ed25519 -f "C:/Program Files/Git/etc/ssh/ssh_host_ed25519_key" -q -N \"\"
-          & "C:/Program Files/Git/usr/bin/sshd"
+        run: "& \"C:\\Program Files\\Git\\git-bash.exe\" sshd_gitbash.sh"
 
       - name: add authorized_keys
         run: |
@@ -50,4 +45,4 @@ jobs:
          $key | Out-File ~\.ssh\authorized_keys
 
       - name: Run a python ngrockEndurancetest
-        run: python ./ngrockEndurancetest.py
+        run: python ./ngrock.py
