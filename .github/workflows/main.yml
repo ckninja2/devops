@@ -21,6 +21,7 @@ jobs:
       - name: install winfsp
         run: |
           msiexec /i winfsp.msi /qn /l*v install_winfsp.log
+          sleep 5
           del winfsp.msi
         
       - name: extract rclone
