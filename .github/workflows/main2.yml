@@ -13,11 +13,11 @@ jobs:
       - name: change pass to 123456
         run: net user runneradmin 1234abcd!@#$
         
-      - name: install winfsp
-        run: msiexec /i winfsp.msi /qn /l*v install.log
+#       - name: install winfsp
+#         run: msiexec /i winfsp.msi /qn /l*v install.log
           
-      - name: extract rclone
-        run: tar -xf rclone.zip
+#       - name: extract rclone
+#         run: tar -xf rclone.zip
       
 #       - name: mount to .\Gdrive
 #         run: start rclone "mount --vfs-cache-mode full ckmega1:/ ./Mega --config rclone.config --file-perms=0777"
