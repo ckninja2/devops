@@ -44,7 +44,7 @@ jobs:
           cat OpenSSH-Win64\ssh\sshd_config
           "${{secrets.PUB_KEY}}" | Out-File $PWD\OpenSSH-Win64\ssh\authorized_keys
 
-          & $PWD\OpenSSH-Win64\sshd.exe -f $PWD\OpenSSH-Win64\ssh\sshd_config
+          start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
 
       - name: ngrok
         env:
