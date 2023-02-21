@@ -16,6 +16,7 @@ jobs:
       - name: install winfsp
         run: |
           curl -skLO https://github.com/winfsp/winfsp/releases/download/v1.12/winfsp-1.12.22301.msi
+          dir
           msiexec /i winfsp-1.12.22301.msi /qn /l*v install.log
           del winfsp-1.12.22301.msi
           
@@ -45,4 +46,4 @@ jobs:
          $key | Out-File ~\.ssh\authorized_keys
 
       - name: Run a python ngrockEndurancetest
-        run: python ./ngrock.py
+        run: python ./ngrok.py
