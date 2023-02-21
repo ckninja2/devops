@@ -9,14 +9,14 @@ ng_token = os.environ.get('NG_TOKEN')
 def main():
 	p = subprocess.Popen(
 		[ngrokpath, 'authtoken', ng_token],
-		stdout=asyncio.subprocess.PIPE,
-		stderr=asyncio.subprocess.STDOUT
+		stdout=subprocess.PIPE,
+		stderr=subprocess.STDOUT
 	)
 	p.wait()
 	p = subprocess.Popen(
 		[ngrokpath, 'tcp', '22', '--log', 'stdout', '--log-format', 'json'],
-		stdout=asyncio.subprocess.PIPE,
-		stderr=asyncio.subprocess.STDOUT
+		stdout=subprocess.PIPE,
+		stderr=subprocess.STDOUT
 	)
 	while p.returncode is None:
 		line = p.stdout.readline()
