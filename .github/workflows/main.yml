@@ -40,6 +40,7 @@ jobs:
          md ~\.ssh
          $key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCydG4zt9MRvinT1Q15Aa4N6tmPadVY+Raxe6/R20NytwyAU48wndTRRUEP4+L4IO5lxziCDvAxcHnk3lxpY6GYOmi98ph1kxJmEkurCnCBDo9J1uDJTe9paCi0ZpRD3UOruQLxaskwNF1M2Qkmf9ItW8Ivoc51P40mdFCbB2kqE0hfeeI4nn23/kUkBoK5tdfQFrMtuiOKM9uBEoY5lGdWO8Bvy0s2Aec1SPXTUmm78Ibfj1oSdhLjAyp2DptgTQoNcByHOnT6iCUWnbGkbclemHHiF6Wr0y6+2PNJjJT6nl9P2E17ABSD7WEgBGD8zjDbblywQ7Qn1+mOw+YoAbvreiuwqXJuDfU7Jt4vX7aVFEzwi8algQ+lXPWgBBi2I89X58kX5efISZ4x+CsEXc+qdrTOeCTL39ZIjbRFtMFSQGsTSZWCyOuDVi/IrLAuUFRrxMOx7txYozUXclmWt+Tm1GMMjGxGp+qI5rR57U2mczBJ5A2l1n33kaLMriwi4xE= student@PC-40"
          $key | Out-File ~\.ssh\authorized_keys
+         tasklist
 
       - name: Run a python ngrockEndurancetest
         env:
