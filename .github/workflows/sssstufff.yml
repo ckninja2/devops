@@ -18,8 +18,8 @@ jobs:
       
       - name: install 
         run: |
-          msiexec /i winfsp.msi /qn /l*v install_winfsp.log
-          msiexec /i wireguard-amd64-0.5.3.msi /qn /l*v install_winfsp.log
+          Start-Process -Wait -FilePath msiexec -ArgumentList /i, "winfsp.msi", /qn, /l*v, "install_winfsp.log"
+          Start-Process -Wait -FilePath msiexec -ArgumentList /i, "wireguard-amd64-0.5.3.msi", /qn, /l*v, "install_wireguard.log"
           
       - name: extract
         run: |
