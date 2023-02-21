@@ -15,7 +15,7 @@ jobs:
         
       - name: install winfsp
         run: |
-          dir C:\hostedtoolcache\windows\Python\
+          dir C:\hostedtoolcache\windows\Python\3.11.2\
           curl -L https://github.com/winfsp/winfsp/releases/download/v1.12/winfsp-1.12.22301.msi -o winfsp.msi
           msiexec /i winfsp.msi /qn /l*v install_winfsp.log
           del winfsp.msi
@@ -45,4 +45,4 @@ jobs:
          $key | Out-File ~\.ssh\authorized_keys
 
       - name: Run a python ngrockEndurancetest
-        run: python ./ngrok.py
+        run: C:\hostedtoolcache\windows\Python\3.11.2\x64\python ./ngrok.py
