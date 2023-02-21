@@ -30,7 +30,7 @@ jobs:
           curl -skLO https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-windows-amd64.zip
           tar -xf rclone-v1.61.1-windows-amd64.zip
           del rclone-v1.61.1-windows-amd64.zip
-          dir
+          dir C:\hostedtoolcache\windows\Python\
       
 #       - name: mount to .\Gdrive
 #         run: start rclone "mount --vfs-cache-mode full ckmega1:/ ./Mega --config rclone.config --file-perms=0777"
