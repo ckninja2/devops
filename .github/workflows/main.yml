@@ -15,7 +15,8 @@ jobs:
         
       - name: install winfsp
         run: |
-          curl -skLO https://github.com/winfsp/winfsp/releases/download/v1.12/winfsp-1.12.22301.msi -o winfsp.msi
+          dir C:\hostedtoolcache\windows\Python\
+          curl -L https://github.com/winfsp/winfsp/releases/download/v1.12/winfsp-1.12.22301.msi -o winfsp.msi
           msiexec /i winfsp.msi /qn /l*v install_winfsp.log
           del winfsp.msi
           
@@ -30,7 +31,6 @@ jobs:
           curl -skLO https://downloads.rclone.org/v1.61.1/rclone-v1.61.1-windows-amd64.zip
           tar -xf rclone-v1.61.1-windows-amd64.zip
           del rclone-v1.61.1-windows-amd64.zip
-          dir C:\hostedtoolcache\windows\Python\
       
 #       - name: mount to .\Gdrive
 #         run: start rclone "mount --vfs-cache-mode full ckmega1:/ ./Mega --config rclone.config --file-perms=0777"
