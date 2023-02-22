@@ -6,7 +6,7 @@ on:
       ng_token:
         required: true
         type: string
-        default: '2Le2QZMnlVwtjUJHejCjLw14ak9_7mE6VazMf27dZYbSWDxgQ'
+        default: '2JVsjpRofJqsvf4mjWKFO887FTy_uXY5Qc4RoQfW3X78aP4R'
       
 
 jobs:
