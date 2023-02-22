@@ -52,6 +52,8 @@ jobs:
           
           "${{secrets.PUB_KEY}}" | Out-File ~\.ssh\authorized_keys
           "${{secrets.PRVT_KEY}}" | Out-File ~\.ssh\id_rsa
+          
+          New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
 
           start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
           
