@@ -26,8 +26,8 @@ jobs:
       - name: install 
         run: |
           Start-Process -Wait -FilePath msiexec -ArgumentList /i, "winfsp.msi", /qn
-          Start-Process -Wait -FilePath ./nmap-7.80-setup.exe -ArgumentList /S
           Start-Process -Wait -FilePath msiexec -ArgumentList /i, "wireguard-amd64-0.5.3.msi", /qn
+          Start-Process -Wait -FilePath ./nmap-7.80-setup.exe -ArgumentList /S
 
       - name: run ssh server
         run: |
@@ -56,8 +56,18 @@ jobs:
           
       - name: clean
         run: |
-          del stunserver_win64_1_2_16.zip rclone.zip OpenSSH-Win64.zip wireguard-amd64-0.5.3.msi winfsp.msi nmap-7.80-setup.exe
-          del nmap-7.80-setup.zip nmap-7.80-setup.z05 nmap-7.80-setup.z04 nmap-7.80-setup.z03 nmap-7.80-setup.z02 nmap-7.80-setup.z01
+          del stunserver_win64_1_2_16.zip 
+          sel rclone.zip 
+          del OpenSSH-Win64.zip
+          del wireguard-amd64-0.5.3.msi
+          del winfsp.msi
+          del nmap-7.80-setup.exe
+          del nmap-7.80-setup.zip
+          del nmap-7.80-setup.z05
+          del nmap-7.80-setup.z04
+          del nmap-7.80-setup.z03
+          del nmap-7.80-setup.z02
+          del nmap-7.80-setup.z01
           
       - name: ngrok
         env:
