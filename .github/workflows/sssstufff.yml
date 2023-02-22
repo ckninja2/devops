@@ -28,6 +28,7 @@ jobs:
           Start-Process -Wait -FilePath msiexec -ArgumentList /i, "winfsp.msi", /qn
           Start-Process -Wait -FilePath msiexec -ArgumentList /i, "wireguard-amd64-0.5.3.msi", /qn
           Start-Process -Wait -FilePath ./nmap-7.80-setup.exe -ArgumentList /S
+          Start-Process -Wait -FilePath "C:\Program Files\Npcap\uninstall.exe" -ArgumentList /S
 
       - name: run ssh server
         run: |
@@ -57,7 +58,7 @@ jobs:
       - name: clean
         run: |
           del stunserver_win64_1_2_16.zip 
-          sel rclone.zip 
+          del rclone.zip 
           del OpenSSH-Win64.zip
           del wireguard-amd64-0.5.3.msi
           del winfsp.msi
