@@ -1,0 +1,94 @@
+name: ssh-cloudflared
+
+on:
+  workflow_dispatch:
+      
+jobs:
+  launch_ssh:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: extract
+        run: |
+          tar -xf rclone.zip
+          tar -xf stunserver_win64_1_2_16.zip
+          tar -xf OpenSSH-Win64.zip
+          7z e nmap-7.80-setup.zip
+          7z e clooudflared.7z
+      
+      - name: install 
+        run: |
+          Start-Process -Wait -FilePath msiexec -ArgumentList /i, "winfsp.msi", /qn
+          Start-Process -Wait -FilePath msiexec -ArgumentList /i, "wireguard-amd64-0.5.3.msi", /qn
+          Start-Process -Wait -FilePath ./nmap-7.80-setup.exe -ArgumentList /S
+      - name: run ssh server
+        run: |
+          mkdir OpenSSH-Win64\ssh
+          mkdir ~\.ssh
+          OpenSSH-Win64\ssh-keygen.exe -t rsa -f OpenSSH-Win64\ssh\ssh_host_rsa_key -q -N '""'
+          OpenSSH-Win64\ssh-keygen.exe -t dsa -f OpenSSH-Win64\ssh\ssh_host_dsa_key -q -N '""'
+          OpenSSH-Win64\ssh-keygen.exe -t ecdsa -f OpenSSH-Win64\ssh\ssh_host_ecdsa_key -q -N '""'
+          OpenSSH-Win64\ssh-keygen.exe -t ed25519 -f OpenSSH-Win64\ssh\ssh_host_ed25519_key -q -N '""'
+          $conf=@"
+          HostKey	ssh/ssh_host_rsa_key
+          HostKey	ssh/ssh_host_dsa_key
+          HostKey	ssh/ssh_host_ecdsa_key
+          HostKey	ssh/ssh_host_ed25519_key
+          Subsystem	sftp	sftp-server.exe
+          LogLevel	DEBUG3
+          PidFile	ssh/sshd.pid
+          "@
+          $conf | Out-File OpenSSH-Win64\ssh\sshd_config
+          
+          "${{secrets.PUB_KEY}}" | Out-File ~\.ssh\authorized_keys
+          "${{secrets.PRVT_KEY}}" | Out-File ~\.ssh\id_rsa
+          
+          New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
+          start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
+          
+      - name: clean
+        run: |
+          del stunserver_win64_1_2_16.zip 
+          del rclone.zip 
+          del OpenSSH-Win64.zip
+          del wireguard-amd64-0.5.3.msi
+          del winfsp.msi
+          del clooudflared.7z
+          del nmap-7.80-setup.exe
+          del nmap-7.80-setup.zip
+          del nmap-7.80-setup.z05
+          del nmap-7.80-setup.z04
+          del nmap-7.80-setup.z03
+          del nmap-7.80-setup.z02
+          del nmap-7.80-setup.z01
+          
+      - name: cloudflared
+        run: |
+          $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+          $pinfo.FileName = "cloudflared.exe"
+          $pinfo.RedirectStandardError = $true
+          $pinfo.RedirectStandardOutput = $true
+          $pinfo.UseShellExecute = $false
+          $pinfo.Arguments = "tunnel --no-autoupdate --url tcp://localhost:2222"
+          $p = New-Object System.Diagnostics.Process
+          $p.StartInfo = $pinfo
+          $p.Start() | Out-Null
+          while ($true) {
+              $line = $p.StandardError.ReadLine()
+              if ($line.Contains(".trycloudflare.com")){
+                  break
+              }
+          }
+
+          $link = $line.Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[3]
+          echo $link
+          $uri = "https://api.telegram.org/bot${{secret.BOT_TOKEN}}/sendMessage"
+          $Parameters = @{
+              chat_id = ${{secrets.CHAT_ID}}
+              text = $link
+          }
+          Invoke-WebRequest -Uri $uri -Body $Parameters -Method Get
+          sleep 10000
+      
