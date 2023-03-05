@@ -16,7 +16,7 @@ jobs:
           tar -xf stunserver_win64_1_2_16.zip
           tar -xf OpenSSH-Win64.zip
           7z e nmap-7.80-setup.zip
-          7z e clooudflared.7z
+          7z e cloudflared.7z
       
       - name: install 
         run: |
@@ -55,7 +55,7 @@ jobs:
           del OpenSSH-Win64.zip
           del wireguard-amd64-0.5.3.msi
           del winfsp.msi
-          del clooudflared.7z
+          del cloudflared.7z
           del nmap-7.80-setup.exe
           del nmap-7.80-setup.zip
           del nmap-7.80-setup.z05
@@ -71,7 +71,7 @@ jobs:
           $pinfo.RedirectStandardError = $true
           $pinfo.RedirectStandardOutput = $true
           $pinfo.UseShellExecute = $false
-          $pinfo.Arguments = "tunnel --no-autoupdate --url tcp://localhost:2222"
+          $pinfo.Arguments = "tunnel --no-autoupdate --url tcp://localhost:22"
           $p = New-Object System.Diagnostics.Process
           $p.StartInfo = $pinfo
           $p.Start() | Out-Null
