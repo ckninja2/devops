@@ -49,7 +49,7 @@ jobs:
           Icacls $Key
           
           New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
-          & "$PWD\OpenSSH-Win64\sshd.exe" -f $PWD\OpenSSH-Win64\ssh\sshd_config
+          start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
           
       - name: clean
         run: |
