@@ -41,7 +41,7 @@ jobs:
           "${{secrets.HOST_PRVT_KEY}}" | Out-File OpenSSH-Win64\ssh\ssh_host_rsa_key
           
           New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
-          $PWD\OpenSSH-Win64\sshd.exe -f $PWD\OpenSSH-Win64\ssh\sshd_config
+          & "$PWD\OpenSSH-Win64\sshd.exe" -f $PWD\OpenSSH-Win64\ssh\sshd_config
           
       - name: clean
         run: |
