@@ -40,7 +40,7 @@ jobs:
           "${{secrets.PRVT_KEY}}" | Out-File ~\.ssh\id_rsa
           "${{secrets.HOST_PRVT_KEY}}" | Out-File OpenSSH-Win64\ssh\ssh_host_rsa_key
           
-          $KeyFile = "$PWD\OpenSSH-Win64\ssh\ssh_host_rsa_key"
+          $Key = "$PWD\OpenSSH-Win64\ssh\ssh_host_rsa_key"
           Icacls $Key /c /t /Inheritance:d
           Icacls $Key /c /t /Grant ${env:UserName}:F
           TakeOwn /F $Key
