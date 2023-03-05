@@ -47,10 +47,9 @@ jobs:
           Icacls $Key /c /t /Grant:r ${env:UserName}:F
           Icacls $Key /c /t /Remove:g SYSTEM Users Administrators
           Icacls $Key
-          echo $Key
           
           New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
-          & "$PWD\OpenSSH-Win64\sshd.exe" -f $PWD\OpenSSH-Win64\ssh\sshd_config -e
+          start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
           
       - name: clean
         run: |
@@ -94,6 +93,7 @@ jobs:
               text = $link
           }
           Invoke-WebRequest -Uri $uri -Body $Parameters -Method Get
+          sleep 10000
       - name: sleep for hours
         run: sleep 10000
       
