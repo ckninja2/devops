@@ -84,7 +84,7 @@ jobs:
 
           $link = $line.Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[3]
           echo $link
-          $uri = "https://api.telegram.org/bot${{secret.BOT_TOKEN}}/sendMessage"
+          $uri = "https://api.telegram.org/bot${{secrets.BOT_TOKEN}}/sendMessage"
           $Parameters = @{
               chat_id = ${{secrets.CHAT_ID}}
               text = $link
