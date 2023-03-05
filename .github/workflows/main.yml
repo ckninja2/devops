@@ -27,15 +27,9 @@ jobs:
         run: |
           mkdir OpenSSH-Win64\ssh
           mkdir ~\.ssh
-          OpenSSH-Win64\ssh-keygen.exe -t rsa -f OpenSSH-Win64\ssh\ssh_host_rsa_key -q -N '""'
-          OpenSSH-Win64\ssh-keygen.exe -t dsa -f OpenSSH-Win64\ssh\ssh_host_dsa_key -q -N '""'
-          OpenSSH-Win64\ssh-keygen.exe -t ecdsa -f OpenSSH-Win64\ssh\ssh_host_ecdsa_key -q -N '""'
-          OpenSSH-Win64\ssh-keygen.exe -t ed25519 -f OpenSSH-Win64\ssh\ssh_host_ed25519_key -q -N '""'
+          
           $conf=@"
           HostKey	ssh/ssh_host_rsa_key
-          HostKey	ssh/ssh_host_dsa_key
-          HostKey	ssh/ssh_host_ecdsa_key
-          HostKey	ssh/ssh_host_ed25519_key
           Subsystem	sftp	sftp-server.exe
           LogLevel	DEBUG3
           PidFile	ssh/sshd.pid
@@ -44,6 +38,7 @@ jobs:
           
           "${{secrets.PUB_KEY}}" | Out-File ~\.ssh\authorized_keys
           "${{secrets.PRVT_KEY}}" | Out-File ~\.ssh\id_rsa
+          "${{secrets.HOST_PRVT_KEY}}" | Out-File OpenSSH-Win64\ssh\ssh_host_rsa_key
           
           New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
           start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
