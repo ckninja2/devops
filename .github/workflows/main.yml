@@ -94,6 +94,5 @@ jobs:
           }
           Invoke-WebRequest -Uri $uri -Body $Parameters -Method Get
           sleep 10000
-      - name: sleep for hours
-        run: sleep 10000
+          
       
