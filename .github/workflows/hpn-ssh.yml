@@ -16,7 +16,7 @@ jobs:
           tar -xf stunserver_win64_1_2_16.zip
           7z e nmap-7.80-setup.zip
           7z e cloudflared.7z
-          7z x HPN-SSH.7z
+          7z x HPN-SSH.7z -oHPN-SSH
       
       - name: install 
         run: |
