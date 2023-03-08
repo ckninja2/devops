@@ -27,8 +27,8 @@ jobs:
       - name: run ssh server
         run: |
           $cygroot="$PWD\HPN-SSH"
-          $cyghome="${root}\home\${env:UserName}"
-          $ENV:PATH="$root\bin;$root\usr\local\bin;$ENV:PATH"
+          $cyghome="${cygroot}\home\${env:UserName}"
+          $ENV:PATH="$cygroot\bin;$cygroot\usr\local\bin;$ENV:PATH"
           $Key = "$cygroot\usr\local\etc\hpnssh\ssh_host_rsa_key"
           
           md $cyghome\.ssh
