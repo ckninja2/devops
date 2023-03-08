@@ -1,0 +1,99 @@
+name: HPN-SSH-cloudflared
+
+on:
+  workflow_dispatch:
+      
+jobs:
+  launch_ssh:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: extract
+        run: |
+          tar -xf rclone.zip
+          tar -xf stunserver_win64_1_2_16.zip
+          7z e nmap-7.80-setup.zip
+          7z e cloudflared.7z
+          7z x HPN-SSH.7z
+      
+      - name: install 
+        run: |
+          Start-Process -Wait -FilePath msiexec -ArgumentList /i, "winfsp.msi", /qn
+          Start-Process -Wait -FilePath msiexec -ArgumentList /i, "wireguard-amd64-0.5.3.msi", /qn
+          Start-Process -Wait -FilePath ./nmap-7.80-setup.exe -ArgumentList /S
+      - name: run ssh server
+        run: |
+          mkdir OpenSSH-Win64\ssh
+          mkdir ~\.ssh
+          
+          $conf=@"
+          HostKey	ssh/ssh_host_rsa_key
+          Subsystem	sftp	sftp-server.exe
+          LogLevel	DEBUG3
+          PidFile	ssh/sshd.pid
+          "@
+          $conf | Out-File OpenSSH-Win64\ssh\sshd_config
+          
+          "${{secrets.PUB_KEY}}" | Out-File ~\.ssh\authorized_keys
+          "${{secrets.PRVT_KEY}}" | Out-File ~\.ssh\id_rsa
+          "${{secrets.HOST_PRVT_KEY}}" | Out-File OpenSSH-Win64\ssh\ssh_host_rsa_key
+          
+          $Key = "$PWD\OpenSSH-Win64\ssh\ssh_host_rsa_key"
+          Icacls $Key /c /t /Inheritance:d
+          Icacls $Key /c /t /Grant ${env:UserName}:F
+          TakeOwn /F $Key
+          Icacls $Key /c /t /Grant:r ${env:UserName}:F
+          Icacls $Key /c /t /Remove:g SYSTEM Users Administrators
+          Icacls $Key
+          
+          New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
+          start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
+          
+      - name: clean
+        run: |
+          del stunserver_win64_1_2_16.zip 
+          del rclone.zip 
+          del OpenSSH-Win64.zip
+          del wireguard-amd64-0.5.3.msi
+          del winfsp.msi
+          del cloudflared.7z
+          del HPN-SSH.7z
+          del nmap-7.80-setup.exe
+          del nmap-7.80-setup.zip
+          del nmap-7.80-setup.z05
+          del nmap-7.80-setup.z04
+          del nmap-7.80-setup.z03
+          del nmap-7.80-setup.z02
+          del nmap-7.80-setup.z01
+          
+      - name: cloudflared
+        run: |
+          $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+          $pinfo.FileName = "cloudflared.exe"
+          $pinfo.RedirectStandardError = $true
+          $pinfo.RedirectStandardOutput = $true
+          $pinfo.UseShellExecute = $false
+          $pinfo.Arguments = "tunnel --no-autoupdate --url tcp://localhost:22"
+          $p = New-Object System.Diagnostics.Process
+          $p.StartInfo = $pinfo
+          $p.Start() | Out-Null
+          while ($true) {
+              $line = $p.StandardError.ReadLine()
+              if ($line.Contains(".trycloudflare.com")){
+                  break
+              }
+          }
+
+          $link = $line.Split(" ", [System.StringSplitOptions]::RemoveEmptyEntries)[3]
+          echo $link
+          $uri = "https://api.telegram.org/bot${{secrets.BOT_TOKEN}}/sendMessage"
+          $Parameters = @{
+              chat_id = ${{secrets.CHAT_ID}}
+              text = $link
+          }
+          Invoke-WebRequest -Uri $uri -Body $Parameters -Method Get
+          sleep 10000
+          
+      
