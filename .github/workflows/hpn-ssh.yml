@@ -46,7 +46,7 @@ jobs:
           
           New-NetFirewallRule -DisplayName “Allow HPN-SSH” -Direction Inbound -LocalPort 2222 -Protocol TCP -Action Allow
           dir $cygroot\usr\local\etc\hpnssh\
-          & $cygroot\usr\local\bin\hpnsshd.exe -e
+          & $cygroot\usr\local\bin\hpnsshd.exe -e -h $Key
           
       - name: clean
         run: |
