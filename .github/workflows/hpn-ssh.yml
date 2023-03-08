@@ -45,7 +45,7 @@ jobs:
           Icacls $Key
           
           New-NetFirewallRule -DisplayName “Allow HPN-SSH” -Direction Inbound -LocalPort 2222 -Protocol TCP -Action Allow
-          & $cygroot\usr\local\bin\hpnsshd.exe
+          start $cygroot\usr\local\bin\hpnsshd.exe
           
       - name: clean
         run: |
