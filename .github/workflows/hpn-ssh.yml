@@ -35,7 +35,7 @@ jobs:
           
           echo "${{secrets.PUB_KEY}}" | tee $cyghome\.ssh\authorized_keys
           echo "${{secrets.PRVT_KEY}}" | tee $cyghome\.ssh\id_rsa
-          echo "${{secrets.HOST_PRVT_KEY}}" | tee $Key
+          & $cygroot\usr\local\bin\hpnssh-keygen -t rsa -f $Key  -q -N '""'
           
           Icacls $Key /c /t /Inheritance:d
           Icacls $Key /c /t /Grant ${env:UserName}:F
