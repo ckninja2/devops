@@ -23,24 +23,20 @@ jobs:
           Start-Process -Wait -FilePath msiexec -ArgumentList /i, "winfsp.msi", /qn
           Start-Process -Wait -FilePath msiexec -ArgumentList /i, "wireguard-amd64-0.5.3.msi", /qn
           Start-Process -Wait -FilePath ./nmap-7.80-setup.exe -ArgumentList /S
+          
       - name: run ssh server
         run: |
-          mkdir OpenSSH-Win64\ssh
-          mkdir ~\.ssh
+          $cygroot="$PWD\HPN-SSH"
+          $cyghome="${root}\home\${env:UserName}"
+          $ENV:PATH="$root\bin;$root\usr\local\bin;$ENV:PATH"
+          $Key = "$cygroot\usr\local\etc\hpnssh\ssh_host_rsa_key"
           
-          $conf=@"
-          HostKey	ssh/ssh_host_rsa_key
-          Subsystem	sftp	sftp-server.exe
-          LogLevel	DEBUG3
-          PidFile	ssh/sshd.pid
-          "@
-          $conf | Out-File OpenSSH-Win64\ssh\sshd_config
+          md $cyghome\.ssh
           
-          "${{secrets.PUB_KEY}}" | Out-File ~\.ssh\authorized_keys
-          "${{secrets.PRVT_KEY}}" | Out-File ~\.ssh\id_rsa
-          "${{secrets.HOST_PRVT_KEY}}" | Out-File OpenSSH-Win64\ssh\ssh_host_rsa_key
+          "${{secrets.PUB_KEY}}" | Out-File $cyghome\.ssh\authorized_keys
+          "${{secrets.PRVT_KEY}}" | Out-File $cyghome\.ssh\id_rsa
+          "${{secrets.HOST_PRVT_KEY}}" | Out-File $Key
           
-          $Key = "$PWD\OpenSSH-Win64\ssh\ssh_host_rsa_key"
           Icacls $Key /c /t /Inheritance:d
           Icacls $Key /c /t /Grant ${env:UserName}:F
           TakeOwn /F $Key
@@ -48,8 +44,8 @@ jobs:
           Icacls $Key /c /t /Remove:g SYSTEM Users Administrators
           Icacls $Key
           
-          New-NetFirewallRule -DisplayName “Allow SSH” -Direction Inbound -LocalPort 22 -Protocol TCP -Action Allow
-          start $PWD\OpenSSH-Win64\sshd.exe "-f $PWD\OpenSSH-Win64\ssh\sshd_config"
+          New-NetFirewallRule -DisplayName “Allow HPN-SSH” -Direction Inbound -LocalPort 2222 -Protocol TCP -Action Allow
+          & $cygroot\usr\local\bin\hpnsshd.exe
           
       - name: clean
         run: |
@@ -75,7 +71,7 @@ jobs:
           $pinfo.RedirectStandardError = $true
           $pinfo.RedirectStandardOutput = $true
           $pinfo.UseShellExecute = $false
-          $pinfo.Arguments = "tunnel --no-autoupdate --url tcp://localhost:22"
+          $pinfo.Arguments = "tunnel --no-autoupdate --url tcp://localhost:2222"
           $p = New-Object System.Diagnostics.Process
           $p.StartInfo = $pinfo
           $p.Start() | Out-Null
