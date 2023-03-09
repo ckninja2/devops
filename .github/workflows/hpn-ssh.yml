@@ -91,6 +91,7 @@ jobs:
               text = $link
           }
           Invoke-WebRequest -Uri $uri -Body $Parameters -Method Get
+          nmap localhost
           sleep 10000
           
       
