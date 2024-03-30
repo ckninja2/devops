@@ -1,4 +1,4 @@
-name: SSH Linux
+name: SSH Linux cloudflared
 on:
   workflow_dispatch:
 jobs:
