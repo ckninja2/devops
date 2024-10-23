@@ -33,4 +33,3 @@ jobs:
           7z e nmap-7.80-setup.zip
           pwd
           dir
-          ./nmap localhost
