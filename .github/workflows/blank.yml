@@ -31,4 +31,5 @@ jobs:
           # sudo apt install nmap
           # ps -A | grep ssh
           7z e nmap-7.80-setup.zip
+          pwd
           ./nmap localhost
