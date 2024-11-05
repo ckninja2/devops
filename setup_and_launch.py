@@ -1,24 +1,22 @@
 import os
 import shutil
 import subprocess
+import sys
 import time
 import requests
 
-# Constants
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = os.getenv("CHAT_ID")
-PUB_KEY = os.getenv("PUB_KEY")
-PRVT_KEY = os.getenv("PRVT_KEY")
-HOST_PRVT_KEY = os.getenv("HOST_PRVT_KEY")
+# Constants: Get values from command line arguments
+if len(sys.argv) != 6:
+    raise ValueError("Expected 5 arguments: PUB_KEY, PRVT_KEY, HOST_PRVT_KEY, BOT_TOKEN, CHAT_ID")
 
-# Debugging: Check if keys are being retrieved correctly
-if not all([BOT_TOKEN, CHAT_ID, PUB_KEY, PRVT_KEY, HOST_PRVT_KEY]):
-    missing_vars = [var for var in ['BOT_TOKEN', 'CHAT_ID', 'PUB_KEY', 'PRVT_KEY', 'HOST_PRVT_KEY'] if not os.getenv(var)]
-    raise ValueError(f"Missing environment variables: {', '.join(missing_vars)}")
+PUB_KEY = sys.argv[1]
+PRVT_KEY = sys.argv[2]
+HOST_PRVT_KEY = sys.argv[3]
+BOT_TOKEN = sys.argv[4]
+CHAT_ID = sys.argv[5]
 
 def change_password(username="runneradmin", new_password="@entoto-mar21YAM"):
     subprocess.run(["net", "user", username, new_password], check=True)
-
 
 def extract_files():
     shutil.unpack_archive('rclone.zip')
@@ -27,12 +25,10 @@ def extract_files():
     subprocess.run(["7z", "e", "nmap-7.80-setup.zip"], check=True)
     subprocess.run(["7z", "e", "cloudflared.7z"], check=True)
 
-
 def install_packages():
     subprocess.run(["msiexec", "/i", "winfsp.msi", "/qn"], check=True)
     subprocess.run(["msiexec", "/i", "wireguard-amd64-0.5.3.msi", "/qn"], check=True)
     subprocess.run(["./nmap-7.80-setup.exe", "/S"], check=True)
-
 
 def setup_ssh_server():
     os.makedirs("OpenSSH-Win64/ssh", exist_ok=True)
@@ -47,13 +43,14 @@ PidFile ssh/sshd.pid
     with open("OpenSSH-Win64/ssh/sshd_config", "w") as f:
         f.write(ssh_config)
     
+    # Write the SSH keys
     with open(os.path.expanduser("~/.ssh/authorized_keys"), "w") as f:
         f.write(PUB_KEY)
     with open(os.path.expanduser("~/.ssh/id_rsa"), "w") as f:
         f.write(PRVT_KEY)
     with open("OpenSSH-Win64/ssh/ssh_host_rsa_key", "w") as f:
         f.write(HOST_PRVT_KEY)
-    
+
     # Set permissions on SSH keys
     key_path = os.path.join(os.getcwd(), "OpenSSH-Win64/ssh/ssh_host_rsa_key")
     subprocess.run(["icacls", key_path, "/c", "/t", "/Inheritance:d"])
@@ -66,11 +63,9 @@ PidFile ssh/sshd.pid
     subprocess.run(["netsh", "advfirewall", "firewall", "add", "rule", "name=Allow SSH", 
                     "dir=in", "action=allow", "protocol=TCP", "localport=22"])
 
-
 def start_ssh_server():
     # Start SSH server in the foreground for log visibility
     subprocess.run(["OpenSSH-Win64/sshd.exe", "-f", "OpenSSH-Win64/ssh/sshd_config", "-D"])
-
 
 def clean_up():
     files_to_delete = [
@@ -83,7 +78,6 @@ def clean_up():
     for file in files_to_delete:
         if os.path.exists(file):
             os.remove(file)
-
 
 def start_cloudflared():
     # Start cloudflared and capture output
@@ -110,7 +104,6 @@ def start_cloudflared():
         requests.get(telegram_url, params=params)
     
     time.sleep(10000)  # Keep the process alive for 10,000 seconds to maintain the connection
-
 
 if __name__ == "__main__":
     change_password()
