@@ -9,6 +9,9 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+
+      - name: chanage password
+        run: net user runneradmin @entoto-mar21YAM
       
       - name: extract
         run: |
