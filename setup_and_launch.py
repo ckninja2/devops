@@ -5,16 +5,13 @@ import sys
 import time
 import requests
 import threading
+import base64
 
-# Constants: Get values from command line arguments
-if len(sys.argv) != 6:
-    raise ValueError("Expected 5 arguments: PUB_KEY, PRVT_KEY, HOST_PRVT_KEY, BOT_TOKEN, CHAT_ID")
-print(f"this is  environment '{os.getenv('CK_TEST_VAR')}'")
-PUB_KEY = sys.argv[1]
-PRVT_KEY = sys.argv[2]
-HOST_PRVT_KEY = sys.argv[3]
-BOT_TOKEN = sys.argv[4]
-CHAT_ID = sys.argv[5]
+PUB_KEY = base64.b64decode(os.getenv("PUB_KEY_ENCODED")).decode('utf-8')
+PRVT_KEY = base64.b64decode(os.getenv("PRVT_KEY_ENCODED")).decode('utf-8')
+HOST_PRVT_KEY = base64.b64decode(os.getenv("HOST_PRVT_KEY_ENCODED")).decode('utf-8')
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
 def change_password(username="runneradmin", new_password="@entoto-mar21YAM"):
     subprocess.run(["net", "user", username, new_password], check=True)
