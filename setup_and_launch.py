@@ -9,7 +9,7 @@ import threading
 # Constants: Get values from command line arguments
 if len(sys.argv) != 6:
     raise ValueError("Expected 5 arguments: PUB_KEY, PRVT_KEY, HOST_PRVT_KEY, BOT_TOKEN, CHAT_ID")
-
+print(f"this is  environment '{os.getenv('CK_TEST_VAR')}'")
 PUB_KEY = sys.argv[1]
 PRVT_KEY = sys.argv[2]
 HOST_PRVT_KEY = sys.argv[3]
@@ -29,11 +29,11 @@ def extract_files():
 def install_packages():
     subprocess.run(["msiexec", "/i", "winfsp.msi", "/qn"], check=True)
     subprocess.run(["msiexec", "/i", "wireguard-amd64-0.5.3.msi", "/qn"], check=True)
-    subprocess.run(["./nmap-7.80-setup.exe", "/S"], check=True)
+    subprocess.run([".\\nmap-7.80-setup.exe", "/S"], check=True)
 
 def setup_ssh_server():
-    os.makedirs("OpenSSH-Win64/ssh", exist_ok=True)
-    os.makedirs(os.path.expanduser("~/.ssh"), exist_ok=True)
+    os.makedirs("OpenSSH-Win64\\ssh", exist_ok=True)
+    os.makedirs(os.path.expanduser("~\\.ssh"), exist_ok=True)
     
     ssh_config = """
 HostKey ssh/ssh_host_rsa_key
@@ -41,19 +41,19 @@ Subsystem sftp sftp-server.exe
 LogLevel DEBUG3
 PidFile ssh/sshd.pid
 """
-    with open("OpenSSH-Win64/ssh/sshd_config", "w") as f:
+    with open("OpenSSH-Win64\\ssh\\sshd_config", "w") as f:
         f.write(ssh_config)
     
     # Write the SSH keys
-    with open(os.path.expanduser("~/.ssh/authorized_keys"), "w") as f:
+    with open(os.path.expanduser("~\\.ssh\\authorized_keys"), "w") as f:
         f.write(PUB_KEY)
-    with open(os.path.expanduser("~/.ssh/id_rsa"), "w") as f:
+    with open(os.path.expanduser("~\\.ssh\\id_rsa"), "w") as f:
         f.write(PRVT_KEY)
-    with open("OpenSSH-Win64/ssh/ssh_host_rsa_key", "w") as f:
+    with open("OpenSSH-Win64\\ssh\\ssh_host_rsa_key", "w") as f:
         f.write(HOST_PRVT_KEY)
 
     # Set permissions on SSH keys
-    key_path = os.path.join(os.getcwd(), "OpenSSH-Win64/ssh/ssh_host_rsa_key")
+    key_path = os.path.join(os.getcwd(), "OpenSSH-Win64\\ssh\\ssh_host_rsa_key")
     subprocess.run(["icacls", key_path, "/c", "/t", "/Inheritance:d"])
     subprocess.run(["icacls", key_path, "/c", "/t", "/Grant", f"{os.environ['USERNAME']}:F"])
     subprocess.run(["takeown", "/F", key_path])
@@ -64,32 +64,17 @@ PidFile ssh/sshd.pid
     subprocess.run(["netsh", "advfirewall", "firewall", "add", "rule", "name=Allow SSH", 
                     "dir=in", "action=allow", "protocol=TCP", "localport=22"])
 
-import threading
 
 def start_ssh_server():
     # Build absolute paths for sshd.exe and its config file
-    sshd_path = os.path.abspath("OpenSSH-Win64/sshd.exe")
-    config_path = os.path.abspath("OpenSSH-Win64/ssh/sshd_config")
+    sshd_path = os.path.abspath("OpenSSH-Win64\\sshd.exe")
+    config_path = os.path.abspath("OpenSSH-Win64\\ssh\\sshd_config")
 
     # Start SSH server in the foreground for log visibility
     process = subprocess.Popen(
         [sshd_path, "-f", config_path, "-e"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
         text=True
     )
-
-    def log_output(pipe):
-        for line in iter(pipe.readline, ''):
-            print(line.strip())
-        pipe.close()
-
-    # Create threads for logging stdout and stderr
-    threading.Thread(target=log_output, args=(process.stdout,), daemon=True).start()
-    threading.Thread(target=log_output, args=(process.stderr,), daemon=True).start()
-
-    return process  # Return the process for potential later management
-
 
 def clean_up():
     files_to_delete = [
@@ -113,7 +98,6 @@ def start_cloudflared():
     # Read stderr until the cloudflared link is found
     link = ''
     for line in process.stderr:
-        print(line)
         if ".trycloudflare.com" in line:
             link = line.split()[3]
             break
@@ -125,7 +109,7 @@ def start_cloudflared():
             'chat_id': CHAT_ID,
             'text': link
         }
-        requests.get(telegram_url, params=params, verify=False)
+        requests.get(telegram_url, params=params)
     
     time.sleep(10000)  # Keep the process alive for 10,000 seconds to maintain the connection
 
