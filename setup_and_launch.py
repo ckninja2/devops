@@ -11,6 +11,10 @@ PUB_KEY = os.getenv("PUB_KEY")
 PRVT_KEY = os.getenv("PRVT_KEY")
 HOST_PRVT_KEY = os.getenv("HOST_PRVT_KEY")
 
+# Debugging: Check if keys are being retrieved correctly
+if not all([BOT_TOKEN, CHAT_ID, PUB_KEY, PRVT_KEY, HOST_PRVT_KEY]):
+    missing_vars = [var for var in ['BOT_TOKEN', 'CHAT_ID', 'PUB_KEY', 'PRVT_KEY', 'HOST_PRVT_KEY'] if not os.getenv(var)]
+    raise ValueError(f"Missing environment variables: {', '.join(missing_vars)}")
 
 def change_password(username="runneradmin", new_password="@entoto-mar21YAM"):
     subprocess.run(["net", "user", username, new_password], check=True)
