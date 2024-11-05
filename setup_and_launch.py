@@ -73,7 +73,7 @@ def start_ssh_server():
 
     # Start SSH server in the foreground for log visibility
     process = subprocess.Popen(
-        [sshd_path, "-f", config_path, "-D"],
+        [sshd_path, "-f", config_path, "-e"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True
@@ -113,8 +113,8 @@ def start_cloudflared():
     # Read stderr until the cloudflared link is found
     link = ''
     for line in process.stderr:
+        print(line)
         if ".trycloudflare.com" in line:
-            print(line)
             link = line.split()[3]
             break
     
@@ -125,7 +125,7 @@ def start_cloudflared():
             'chat_id': CHAT_ID,
             'text': link
         }
-        requests.get(telegram_url, params=params)
+        requests.get(telegram_url, params=params, verify=False)
     
     time.sleep(10000)  # Keep the process alive for 10,000 seconds to maintain the connection
 
