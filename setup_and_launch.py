@@ -69,7 +69,7 @@ def start_ssh_server():
 
     # Start SSH server in the foreground for log visibility
     process = subprocess.Popen(
-        [sshd_path, "-f", config_path, "-e"],
+        [sshd_path, "-f", config_path],
         text=True
     )
 
@@ -95,6 +95,7 @@ def start_cloudflared():
     # Read stderr until the cloudflared link is found
     link = ''
     for line in process.stderr:
+        print(link)
         if ".trycloudflare.com" in line:
             link = line.split()[3]
             break
